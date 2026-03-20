@@ -3,7 +3,7 @@ import requests
 
 app = Flask(__name__)
 
-CLIENT_ID = "demo"   # temporary demo key
+CLIENT_ID = "6ea226f7"  # temporary demo key
 
 @app.route("/", methods=["GET", "POST"])
 def home():
