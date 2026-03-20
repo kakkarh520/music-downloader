@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Music Downloader Ultra Pro</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Poppins;
+}
+
+body{
+background:#020617;
+color:white;
+display:flex;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:220px;
+height:100vh;
+background:#000814;
+padding:25px;
+position:fixed;
+}
+
+.sidebar h2{
+color:#22c55e;
+margin-bottom:30px;
+}
+
+.sidebar p{
+margin:15px 0;
+color:#94a3b8;
+cursor:pointer;
+}
+
+.sidebar p:hover{
+color:white;
+}
+
+/* MAIN AREA */
+
+.main{
+margin-left:220px;
+width:100%;
+padding:30px;
+}
+
+.search-box{
+text-align:center;
+margin-bottom:30px;
+}
+
+input{
+padding:12px;
+width:280px;
+border-radius:8px;
+border:none;
+}
+
+button{
+padding:12px 20px;
+background:#22c55e;
+border:none;
+color:white;
+border-radius:8px;
+cursor:pointer;
+font-weight:bold;
+}
+
+button:hover{
+background:#16a34a;
+}
+
+/* MUSIC CARDS */
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:20px;
+}
+
+.card{
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(10px);
+padding:20px;
+border-radius:15px;
+transition:0.3s;
+box-shadow:0 0 20px rgba(0,0,0,0.4);
+}
+
+.card:hover{
+transform:scale(1.03);
+}
+
+audio{
+width:100%;
+margin-top:10px;
+}
+
+.download{
+margin-top:10px;
+}
+
+/* MOBILE */
+
+@media(max-width:800px){
+.sidebar{
+display:none;
+}
+.main{
+margin-left:0;
+}
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+<h2>🎵 Ultra Music</h2>
+<p>Home</p>
+<p>Search</p>
+<p>Trending</p>
+<p>Library</p>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+<div class="search-box">
+<h1>Music Downloader Ultra Pro</h1>
+
+<form method="POST">
+<input type="text" name="song" placeholder="Search music..." required>
+<button type="submit">Search</button>
+</form>
+</div>
+
+<div class="grid">
+
+{% for song in songs %}
+<div class="card">
+
+<h3>{{ song.name }}</h3>
+<p>{{ song.artist_name }}</p>
+
+{% if song.album_image %}
+<img src="{{ song.album_image }}" width="100%" style="border-radius:10px;">
+{% endif %}
+
+<audio controls>
+<source src="{{ song.audio }}" type="audio/mpeg">
+</audio>
+
+<div class="download">
+<a href="{{ song.audio }}" download>
+<button>⬇ Download</button>
+</a>
+</div>
+
+</div>
+{% endfor %}
+
+</div>
+</div>
+
+</body>
+</html>
