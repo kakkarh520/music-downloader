@@ -1,35 +1,43 @@
-from flask import Flask, render_template, request
-import requests
+from flask import Flask, render_template, request, jsonify
+import yt_dlp
 
+# IMPORTANT — app first define hota hai
 app = Flask(__name__)
 
-CLIENT_ID = "6ea226f7"  # temporary demo key
 
-@app.route("/", methods=["GET", "POST"])
+# Home Page
+@app.route("/")
 def home():
-    from flask import Flask, render_template, request
-import requests
+    return render_template("index.html")
 
-app = Flask(__name__)
 
-CLIENT_ID = "YOUR_CLIENT_ID"   # apni Jamendo key
+# Search Songs
+@app.route("/search")
+def search():
+    query = request.args.get("q")
 
-@app.route("/", methods=["GET", "POST"])
-def home():
+    ydl_opts = {
+        'quiet': True,
+        'noplaylist': True
+    }
+
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        result = ydl.extract_info(f"ytsearch10:{query}", download=False)
+
     songs = []
 
-    # TRENDING SONGS (default)
-    url = f"https://api.jamendo.com/v3.0/tracks/?client_id={CLIENT_ID}&format=json&limit=12&order=popularity_total"
+    for video in result["entries"]:
+        if video.get("availability") == "private":
+            continue
 
-    # SEARCH SONGS
-    if request.method == "POST":
-        query = request.form["song"]
-        url = f"https://api.jamendo.com/v3.0/tracks/?client_id={CLIENT_ID}&format=json&limit=12&search={query}"
+        songs.append({
+            "title": video["title"],
+            "id": video["id"]
+        })
 
-    response = requests.get(url).json()
-    songs = response["results"]
+    return jsonify(songs[:5])
 
-    return render_template("index.html", songs=songs)
 
+# Run Server
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

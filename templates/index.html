@@ -1,178 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Music Downloader Ultra Pro</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+<title>Next Level Music</title>
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Poppins;
-}
-
 body{
-background:#020617;
+background:#111;
 color:white;
-display:flex;
-}
-
-/* SIDEBAR */
-
-.sidebar{
-width:220px;
-height:100vh;
-background:#000814;
-padding:25px;
-position:fixed;
-}
-
-.sidebar h2{
-color:#22c55e;
-margin-bottom:30px;
-}
-
-.sidebar p{
-margin:15px 0;
-color:#94a3b8;
-cursor:pointer;
-}
-
-.sidebar p:hover{
-color:white;
-}
-
-/* MAIN AREA */
-
-.main{
-margin-left:220px;
-width:100%;
-padding:30px;
-}
-
-.search-box{
+font-family:Arial;
 text-align:center;
-margin-bottom:30px;
 }
 
 input{
 padding:12px;
-width:280px;
+width:300px;
 border-radius:8px;
 border:none;
 }
 
 button{
-padding:12px 20px;
-background:#22c55e;
+padding:10px 18px;
+margin:8px;
+background:#1db954;
 border:none;
 color:white;
-border-radius:8px;
+border-radius:6px;
 cursor:pointer;
-font-weight:bold;
 }
 
-button:hover{
-background:#16a34a;
+iframe{
+margin-top:20px;
 }
-
-/* MUSIC CARDS */
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-gap:20px;
-}
-
-.card{
-background:rgba(255,255,255,0.05);
-backdrop-filter:blur(10px);
-padding:20px;
-border-radius:15px;
-transition:0.3s;
-box-shadow:0 0 20px rgba(0,0,0,0.4);
-}
-
-.card:hover{
-transform:scale(1.03);
-}
-
-audio{
-width:100%;
-margin-top:10px;
-}
-
-.download{
-margin-top:10px;
-}
-
-/* MOBILE */
-
-@media(max-width:800px){
-.sidebar{
-display:none;
-}
-.main{
-margin-left:0;
-}
-}
-
 </style>
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-<h2>🎵 Ultra Music</h2>
-<p>Home</p>
-<p>Search</p>
-<p>Trending</p>
-<p>Library</p>
-</div>
+<h1>🎵 Next Level Music Player</h1>
 
-<!-- MAIN CONTENT -->
-<div class="main">
+<input id="song" placeholder="Search any song...">
+<button onclick="searchSong()">Search</button>
 
-<div class="search-box">
-<h1>Music Downloader Ultra Pro</h1>
+<div id="results"></div>
 
-<form method="POST">
-<input type="text" name="song" placeholder="Search music..." required>
-<button type="submit">Search</button>
-</form>
-</div>
+<iframe id="player" width="560" height="315"
+src=""
+frameborder="0"
+allowfullscreen>
+</iframe>
 
-<div class="grid">
+<script>
 
-{% for song in songs %}
-<div class="card">
+function searchSong(){
+let q=document.getElementById("song").value;
 
-<h3>{{ song.name }}</h3>
-<p>{{ song.artist_name }}</p>
+fetch("/search?q="+q)
+.then(res=>res.json())
+.then(data=>{
+let html="";
+data.forEach(song=>{
+html+=`<p onclick="play('${song.id}')">${song.title}</p>`;
+});
+document.getElementById("results").innerHTML=html;
+});
+}
 
-{% if song.album_image %}
-<img src="{{ song.album_image }}" width="100%" style="border-radius:10px;">
-{% endif %}
-
-<audio controls>
-<source src="{{ song.audio }}" type="audio/mpeg">
-</audio>
-
-<div class="download">
-<a href="{{ song.audio }}" download>
-<button>⬇ Download</button>
-</a>
-</div>
-
-</div>
-{% endfor %}
-
-</div>
-</div>
+function play(id){
+document.getElementById("player").src =
+"https://www.youtube.com/embed/"+id+"?autoplay=1";
+}
+</script>
 
 </body>
 </html>
