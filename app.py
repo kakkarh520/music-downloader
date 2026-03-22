@@ -1,43 +1,47 @@
 from flask import Flask, render_template, request, jsonify
 import yt_dlp
+import os
 
-# IMPORTANT — app first define hota hai
 app = Flask(__name__)
 
-
-# Home Page
 @app.route("/")
 def home():
     return render_template("index.html")
 
 
-# Search Songs
 @app.route("/search")
 def search():
     query = request.args.get("q")
 
     ydl_opts = {
-        'quiet': True,
-        'noplaylist': True
+        "quiet": True,
+        "extract_flat": True,
+        "skip_download": True
     }
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        result = ydl.extract_info(f"ytsearch10:{query}", download=False)
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            result = ydl.extract_info(
+                f"ytsearch5:{query}",
+                download=False
+            )
 
-    songs = []
+        songs = []
 
-    for video in result["entries"]:
-        if video.get("availability") == "private":
-            continue
+        for video in result["entries"]:
+            songs.append({
+                "title": video["title"],
+                "id": video["id"]
+            })
 
-        songs.append({
-            "title": video["title"],
-            "id": video["id"]
-        })
+        return jsonify(songs)
 
-    return jsonify(songs[:5])
+    except Exception as e:
+        print("ERROR:", e)
+        return jsonify([])
 
 
-# Run Server
+# ✅ IMPORTANT FOR RENDER LIVE SERVER
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
