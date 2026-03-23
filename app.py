@@ -5,7 +5,7 @@ import requests
 app = Flask(__name__)
 app.secret_key = "harshmusic"
 
-CLIENT_ID = "YOUR_JAMENDO_CLIENT_ID"
+CLIENT_ID = "6ea226f7"
 
 
 # ---------- DATABASE ----------
