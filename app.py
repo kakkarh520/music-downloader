@@ -19,29 +19,22 @@ def search():
         "skip_download": True
     }
 
-    try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            result = ydl.extract_info(
-                f"ytsearch5:{query}",
-                download=False
-            )
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        result = ydl.extract_info(f"ytsearch6:{query}", download=False)
 
-        songs = []
+    songs = []
 
-        for video in result["entries"]:
-            songs.append({
-                "title": video["title"],
-                "id": video["id"]
-            })
+    for v in result["entries"]:
+        songs.append({
+            "title": v["title"],
+            "id": v["id"],
+            "thumbnail": f"https://img.youtube.com/vi/{v['id']}/hqdefault.jpg",
+            "url": f"https://www.youtube.com/watch?v={v['id']}"
+        })
 
-        return jsonify(songs)
-
-    except Exception as e:
-        print("ERROR:", e)
-        return jsonify([])
+    return jsonify(songs)
 
 
-# ✅ IMPORTANT FOR RENDER LIVE SERVER
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
