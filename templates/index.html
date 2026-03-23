@@ -3,40 +3,68 @@
 <head>
 <title>Harsh Music</title>
 <style>
-body{background:#121212;color:white;font-family:Arial;text-align:center}
+body{background:#121212;color:white;font-family:Arial}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;padding:20px}
 .card{background:#181818;padding:15px;border-radius:10px}
 img{width:100%;border-radius:10px}
-button{padding:8px 15px;margin-top:10px;border:none;border-radius:6px;background:#1db954;color:white}
+button{background:#1db954;border:none;padding:8px;color:white;margin-top:5px}
 </style>
 </head>
+
 <body>
 
-<h1>🎵 Harsh Music</h1>
+<h2>Welcome {{user}}</h2>
+<h3>Trending Music</h3>
 
 <div class="grid" id="songs"></div>
 
+<h3>Your Playlist</h3>
+<div id="playlist"></div>
+
 <script>
+
+function loadSongs(){
 fetch("/songs")
-.then(res=>res.json())
+.then(r=>r.json())
 .then(data=>{
 let html="";
-data.forEach(song=>{
+data.forEach(s=>{
 html+=`
 <div class="card">
-<img src="${song.image}">
-<h3>${song.title}</h3>
-<p>${song.artist}</p>
-<audio controls src="${song.audio}"></audio>
-<br>
-<a href="${song.audio}" download>
-<button>Download</button>
-</a>
-</div>
-`;
+<img src="${s.image}">
+<h4>${s.title}</h4>
+<p>${s.artist}</p>
+<audio controls src="${s.audio}"></audio><br>
+<button onclick="save('${s.title}','${s.audio}')">❤️ Save</button>
+<a href="${s.audio}" download><button>⬇ Download</button></a>
+</div>`;
 });
 document.getElementById("songs").innerHTML=html;
 });
+}
+
+function save(t,a){
+fetch("/save",{method:"POST",
+headers:{'Content-Type':'application/x-www-form-urlencoded'},
+body:`title=${t}&audio=${a}`})
+.then(()=>loadPlaylist());
+}
+
+function loadPlaylist(){
+fetch("/playlist")
+.then(r=>r.json())
+.then(data=>{
+let html="";
+data.forEach(s=>{
+html+=`<p>${s.title}</p>`;
+});
+document.getElementById("playlist").innerHTML=html;
+});
+}
+
+loadSongs();
+loadPlaylist();
+
 </script>
 
 </body>
